@@ -5,114 +5,13 @@
         "location": {
             "value": "westeurope"
         },
-        "networkInterfaceName": {
-            "value": "eli-machine321"
-        },
-        "networkSecurityGroupName": {
-            "value": "Eli-machine-nsg"
-        },
-        "networkSecurityGroupRules": {
-            "value": [
-                {
-                    "name": "SSH",
-                    "properties": {
-                        "priority": 300,
-                        "protocol": "TCP",
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "sourceAddressPrefix": "*",
-                        "sourcePortRange": "*",
-                        "destinationAddressPrefix": "*",
-                        "destinationPortRange": "22"
-                    }
-                },
-                {
-                    "name": "HTTP",
-                    "properties": {
-                        "priority": 320,
-                        "protocol": "TCP",
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "sourceAddressPrefix": "*",
-                        "sourcePortRange": "*",
-                        "destinationAddressPrefix": "*",
-                        "destinationPortRange": "80"
-                    }
-                },
-                {
-                    "name": "HTTPS",
-                    "properties": {
-                        "priority": 340,
-                        "protocol": "TCP",
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "sourceAddressPrefix": "*",
-                        "sourcePortRange": "*",
-                        "destinationAddressPrefix": "*",
-                        "destinationPortRange": "443"
-                    }
-                }
-            ]
-        },
-        "subnetName": {
-            "value": "default"
-        },
-        "virtualNetworkName": {
-            "value": "Elitemp-vnet"
-        },
-        "addressPrefixes": {
-            "value": [
-                "10.1.9.0/24"
-            ]
-        },
-        "subnets": {
-            "value": [
-                {
-                    "name": "default",
-                    "properties": {
-                        "addressPrefix": "10.1.9.0/24"
-                    }
-                }
-            ]
-        },
-        "publicIpAddressName": {
-            "value": "Eli-machine-ip"
-        },
-        "publicIpAddressType": {
-            "value": "Dynamic"
-        },
-        "publicIpAddressSku": {
-            "value": "Basic"
-        },
         "virtualMachineName": {
             "value": "Eli-machine"
-        },
-        "virtualMachineComputerName": {
-            "value": "Eli-machine"
-        },
-        "virtualMachineRG": {
-            "value": "Elitemp"
-        },
-        "osDiskType": {
-            "value": "Standard_LRS"
-        },
-        "virtualMachineSize": {
-            "value": "Standard_B2s"
         },
         "adminUsername": {
             "value": "azureuser"
         },
-        "diagnosticsStorageAccountName": {
-            "value": "elitempdiag"
-        },
-        "diagnosticsStorageAccountId": {
-            "value": "Microsoft.Storage/storageAccounts/elitempdiag"
-        },
-        "diagnosticsStorageAccountType": {
-            "value": "Standard_LRS"
-        },
-        "diagnosticsStorageAccountKind": {
-            "value": "Storage"
+        "adminPassword": {
+            "value": "azureuser"
         }
-    }
 }

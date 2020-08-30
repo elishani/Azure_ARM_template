@@ -67,6 +67,23 @@
         }
     },
     "variables": {
+        "virtualMachineName": "Eli-machine",
+        "adminUsername": "azureuser",
+        "adminPassword": "azureuser",
+        "networkInterfaceName": "eli-machine321",
+        "networkSecurityGroupName": "Eli-machine-nsg",
+        "publicIpAddressName": "Eli-machine-ip",
+        "publicIpAddressType": "Dynamic",
+        "publicIpAddressSku": "Basic",
+        "virtualMachineName": "Eli-machine",
+        "virtualMachineComputerName": "Eli-machine",
+        "virtualMachineRG": "Elitemp",
+        "osDiskType": "Standard_LRS",
+        "virtualMachineSize": "Standard_B2s",
+        "diagnosticsStorageAccountName": "elitempdiag",
+        "diagnosticsStorageAccountId": "Microsoft.Storage/storageAccounts/elitempdiag",
+        "diagnosticsStorageAccountType": "Standard_LRS",
+        "diagnosticsStorageAccountKind": "Storage",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
