@@ -1,12 +1,11 @@
 #!/bin/bash -xv
-web_host=${aws_instance.rep.private_ip}
 apt update
 apt install -y nginx
 cat > /etc/nginx/nginx.conf <<EOF
 events { }
 http {
 	upstream beckend {
-		server ${web_host}:80;
+		server <web server>:80;
 		}
 	server {
 		listen 443 ssl;
