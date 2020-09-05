@@ -5,7 +5,7 @@ cat > /etc/nginx/nginx.conf <<EOF
 events { }
 http {
 	upstream beckend {
-		server <web server>:80;
+		server beckend:80;
 		}
 	server {
 		listen 443 ssl;
