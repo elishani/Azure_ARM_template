@@ -23,7 +23,8 @@
     },
     "functions": [],
     "variables": {
-       "storageName": "[concat('storageaccount', parameters('storageSufix'))]" 
+       "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
+       "scriptUrlInstallApache": "https://github.com/elishani/Azure_ARM_template/blob/master/scripts/install-apache.sh" 
     },
     "resources": [
         {
@@ -270,7 +271,28 @@
                     }
                 }
             }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "ubuntuVM2/install-apache",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "Microsoft.Compute/virtualMachines/ubuntuVM2"
+            ],
+            "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+            "fileUris": [
+                "[variables('scriptUrlInstallApache')]"
+            ],
+            "commandToExecute": "sh install-apache.sh"
+            }
         }
+    }
     ],
     "outputs": {}
 }
