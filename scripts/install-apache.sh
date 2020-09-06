@@ -1,5 +1,4 @@
 #!/bin/bash
-sleep 60
 apt update
 apt install -y apache2
 cat > /var/www/html/index.html <<EOF
