@@ -23,15 +23,21 @@
     },
     "functions": [],
     "variables": {
-       "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
-       "scriptUrlInstallApache": "https://github.com/elishani/Azure_ARM_template/blob/master/scripts/install-apache.sh" 
+        "location": "[resourceGroup().location]", 
+        "vmName1": "ubuntuVM1",
+        "vmName2": "ubuntuVM2",
+        "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
+        "publicIP2": "[concat(variables('vmName2'), '-PublicIP')]",
+        "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
+        "scriptUrlInstallApache": "https://raw.githubusercontent.com/elishani/Azure_ARM_template/master/scripts/install-apache.sh",
+        "scriptUrlInstallNginx": "https://raw.githubusercontent.com/elishani/Azure_ARM_template/master/scripts/install-nginx.sh"
     },
     "resources": [
         {
             "name": "[variables('storageName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "ubuntuVM1 Storage Account"
             },
@@ -41,10 +47,10 @@
             "kind": "Storage"
         },
         {
-            "name": "ubuntuVM1-PublicIP",
+            "name": "[variables('publicIP1')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "PublicIPAddress"
             },
@@ -53,10 +59,10 @@
             }
         },
         {
-            "name": "ubuntuVM2-PublicIP",
+            "name": "[variables('publicIP2')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "PublicIPAddress"
             },
@@ -68,7 +74,7 @@
             "name": "ubuntuVM-nsg",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2018-08-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "properties": {
                 "securityRules": [
                     {
@@ -77,7 +83,7 @@
                             "description": "description",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "22",
+                            "destinationPortRanges": ["22", "80", "443"],
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
@@ -92,7 +98,7 @@
             "name": "ubuntuVM-VirtualNetwork",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', 'ubuntuVM-nsg')]"
             ],
@@ -122,7 +128,7 @@
             "name": "ubuntuVM1-NetworkInterface",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM1-PublicIP')]",
                 "[resourceId('Microsoft.Network/virtualNetworks', 'ubuntuVM-VirtualNetwork')]"
@@ -151,7 +157,7 @@
             "name": "ubuntuVM2-NetworkInterface",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2019-11-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM2-PublicIP')]",
                 "[resourceId('Microsoft.Network/virtualNetworks', 'ubuntuVM-VirtualNetwork')]"
@@ -180,7 +186,7 @@
             "name": "ubuntuVM1",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM1-NetworkInterface')]"
             ],
@@ -228,7 +234,7 @@
             "name": "ubuntuVM2",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM2-NetworkInterface')]"
             ],
@@ -275,8 +281,29 @@
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "ubuntuVM1/install-nginx",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "Microsoft.Compute/virtualMachines/ubuntuVM1"
+            ],
+            "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+            "fileUris": [
+                "[variables('scriptUrlInstallNginx')]"
+            ],
+            "commandToExecute": "sh install-nginx.sh"
+            }
+        }
+    },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "ubuntuVM2/install-apache",
-            "location": "[resourceGroup().location]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "Microsoft.Compute/virtualMachines/ubuntuVM2"
             ],
