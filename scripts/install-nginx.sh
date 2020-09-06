@@ -26,4 +26,4 @@ mkdir ssl
 chmod 700 ssl
 yes "" | openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/eli.key -out  /etc/nginx/ssl/eli.crt
 #nginx -t 
-#systemctl reload nginx
+systemctl reload nginx
