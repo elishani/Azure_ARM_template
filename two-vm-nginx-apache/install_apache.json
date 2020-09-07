@@ -4,7 +4,6 @@
     "parameters": {
     "storageSufix": {
     "type": "string",
-    "defaultValue": "[resourceGroup().name]",
     "metadata": {
         "description": "Sufix to storageAccount."
             }
@@ -37,7 +36,8 @@
         "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",
         "interfaceName2": "[concat(variables('vmName2'), '')]",
         "subNetName": "[concat(variables('VirtualNetworkName'), '-Subnet')]",
-        "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
+        /*"_artifactsLocation": "https://raw.githubusercontent.com/elishani/Azure_ARM_template/master/scripts/",*/
+        "_artifactsLocation": "https://raw.githubusercontent.com/elishani/terrafom/master/",
         "_artifactsLocationSasToken": ""
     },
     "resources": [
@@ -54,18 +54,7 @@
             },
             "kind": "Storage"
         },
-        {   
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[variables('publicIP1')]",
-            "apiVersion": "2019-11-01",
-            "location": "[variables('location')]",
-            "tags": {
-                "displayName": "PublicIPAddress"
-            },
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic"
-            }
-        },
+        
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('publicIP2')]",
@@ -132,35 +121,6 @@
                 ]
             }
         },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[variables('interfaceName1')]",
-            "apiVersion": "2019-11-01",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP1'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
-            ],
-            "tags": {
-                "displayName": "[variables('interfaceName1')]"
-            },
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipConfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP1'))]"
-                            },
-                            "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetworkName'), variables('subNetName'))]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
         {    
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('interfaceName2')]",
@@ -188,54 +148,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('vmName1')]",
-            "apiVersion": "2019-07-01",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
-            ],
-            "tags": {
-                "displayName": "[variables('vmName1')]"
-            },
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "Standard_A2_v2"
-                },
-                "osProfile": {
-                    "computerName": "[variables('vmName1')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
-                        "sku": "[variables('ubuntuOS')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[concat(variables('vmName1'), '-OSDisk')]",
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
-                        }
-                    ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName'))).primaryEndpoints.blob]"
-                    }
-                }
             }
         },
         {
@@ -286,48 +198,27 @@
                 }
             }
         },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName1'), '/install-nginx')]",
-            "apiVersion": "2020-06-01",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',variables('vmName1'))]"
-            ],
-            "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-            "fileUris": [
-                "[uri(variables('_artifactsLocation'), concat('install-nginx.sh', variables('_artifactsLocationSasToken')))]"
-            ],
-            "commandToExecute": "sh install-nginx.sh"
-            }
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName2'),'/newuserscript')]",
+      "apiVersion": "2020-06-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName2'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[uri(variables('_artifactsLocation'), concat('install_apache.sh', variables('_artifactsLocationSasToken')))]"
+          ],
+          "commandToExecute": "sh install_apache.sh"
         }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName2'),'/istall-apache')]",
-            "apiVersion": "2020-06-01",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                 "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName2'))]"
-            ],
-            "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-                "fileUris": [
-                     "[uri(variables('_artifactsLocation'), concat('install-apache.sh', variables('_artifactsLocationSasToken')))]"
-                ],
-            "commandToExecute": "sh install-apache.sh"
-            }
-        }
+      }
     }
-],
+    ],
     "outputs": {}
 }
